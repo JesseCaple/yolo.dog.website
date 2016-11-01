@@ -2,11 +2,17 @@
 
 Client.Home.Test = function (number, string)
 {
-    console.log("server called me");
-    console.log("number: " + number + "   string:" + string);
+    console.log("number: " + number + ", string: " + string);
 };
+
+Client.Home.Test2 = function ()
+{
+    console.log("test 2 called");
+};
+
 
 mRPCReady = function ()
 {
-    //Server.Home.Test("im calling the server");
+    var obj = { value1: 1, value2: "test?" };
+    Server.Home.Test(obj);
 };

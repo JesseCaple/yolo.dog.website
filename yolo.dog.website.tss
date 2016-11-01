@@ -2,25 +2,19 @@
 <ArrayOfArrayOfArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <ArrayOfArrayOfString>
     <ArrayOfString>
-      <string>yolo.dog</string>
-    </ArrayOfString>
-    <ArrayOfString>
-      <string>C:\Personal\Code\yolo.dog.website\project.json</string>
-    </ArrayOfString>
-    <ArrayOfString>
       <string>C:\Personal\Code\yolo.dog.website\wwwroot\js\mRPC.js</string>
     </ArrayOfString>
     <ArrayOfString>
-      <string>C:\Personal\Code\yolo.dog.website\Views\_ViewImports.cshtml</string>
+      <string>C:\Personal\Code\yolo.dog.website\wwwroot\js\site.js</string>
     </ArrayOfString>
     <ArrayOfString>
-      <string>C:\Personal\Code\yolo.dog.website\Views\_ViewStart.cshtml</string>
+      <string>C:\Personal\Code\mRPC\Public\RPCServer.cs</string>
     </ArrayOfString>
     <ArrayOfString>
-      <string>C:\Personal\Code\yolo.dog.website\Views\Shared\_Layout.cshtml</string>
+      <string>C:\Personal\Code\yolo.dog.website\Controllers\HomeController.cs</string>
     </ArrayOfString>
     <ArrayOfString>
-      <string>C:\Personal\Code\mRPC\WebSocket\WebSocketMiddleware.cs</string>
+      <string>C:\Personal\Code\mRPC\Public\RPCManager.cs</string>
     </ArrayOfString>
   </ArrayOfArrayOfString>
 </ArrayOfArrayOfArrayOfString>

@@ -14,18 +14,15 @@ namespace yolo.dog.website.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IInviteManager _inviteManager;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RPCManager<HomeController> _tube;
+        private readonly RPCManager<HomeController> _rpc;
 
         public HomeController(
             UserManager<ApplicationUser> userManager,
-            IInviteManager inviteManager,
-            RPCManager<HomeController> tube)
+            RPCManager<HomeController> rpc)
         {
             _userManager = userManager;
-            _inviteManager = inviteManager;
-            _tube = tube;
+            _rpc = rpc;
         }
 
         public IActionResult Index()
@@ -33,30 +30,33 @@ namespace yolo.dog.website.Controllers
             return View();
         }
 
+        //[NonAction]
         public async Task Error()
         {
-            await _tube.Test("Jesse");
+            await _rpc.DynamicRPC.Test(27, "Jesse");
         }
 
         public struct TestStuct
         {
-            public string value1;
+            public int value1;
             public string value2;
         }
 
         [RPC]
-        [NonAction]
-        public string Test(TestStuct test)
+        public void Test(TestStuct test)
         {
-            return $"You gave me: {test.value1} and {test.value2}";
+            _rpc.DynamicRPC.Test(test.value1, test.value2);
+            foreach (var connection in _rpc.Connections)
+            {
+                connection.DynamicRPC.Test2();
+            }
         }
 
 
         [RPC]
-        [NonAction]
-        public string Test2(int number)
+        public IActionResult Test2()
         {
-            return $"You gave me: {number}";
+            return NotFound();
         }
     }
 }
