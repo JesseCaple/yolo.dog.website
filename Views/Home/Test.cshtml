@@ -1,0 +1,32 @@
+﻿@{
+    ViewData["Title"] = "Test Result";
+}
+
+<h1>Test Result</h1>
+@if (ViewData["Result"] != null)
+{
+    <h2 class="text-danger">@ViewData["Result"]</h2>
+}
+else
+{
+    <h2 class="text-danger">No result specified.</h2>
+}
+
+
+<style type="text/css">
+    .userListDiv {
+        float: right;
+    }
+</style>
+
+<ul id="messages"></ul>
+<input type="text" id="messageBox" />
+<input type="button" id="sendMessage" value="Send Message!" />
+<div class="userListDiv">
+    <ul id="userList"> </ul>
+</div>
+
+<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.1.0.min.js"></script>
+<script src="https://ajax.aspnetcdn.com/ajax/signalr/jquery.signalr-2.2.1.min.js"></script>
+<script src="signalr/hubs"></script>
+<script src="~/js/TestHub.js"></script>
