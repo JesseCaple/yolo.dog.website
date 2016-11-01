@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TubesWebsite.Models;
+using yolo.dog.website.Models;
 
-namespace TubesWebsite.Services
+namespace yolo.dog.website.Services
 {
 
     public enum InviteResult

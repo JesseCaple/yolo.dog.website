@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using TubesWebsite.Models;
-using TubesWebsite.Models.ManageViewModels;
-using TubesWebsite.Services;
+using yolo.dog.website.Models;
+using yolo.dog.website.Models.ManageViewModels;
+using yolo.dog.website.Services;
 
-namespace TubesWebsite.Controllers
+namespace yolo.dog.website.Controllers
 {
     [Authorize]
     public class ManageController : Controller

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
-namespace TubesWebsite.Models
+namespace yolo.dog.website.Models
 {
     public class ApplicationUser : IdentityUser
     {

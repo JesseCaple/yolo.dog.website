@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace TubesWebsite.Data.Migrations
+namespace yolo.dog.website.Data.Migrations
 {
     public partial class CreateIdentitySchema : Migration
     {

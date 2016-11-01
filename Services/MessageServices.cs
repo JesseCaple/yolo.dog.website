@@ -7,7 +7,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace TubesWebsite.Services
+namespace yolo.dog.website.Services
 {
     public class MessageServices : IEmailSender, IEmailValidator
     {

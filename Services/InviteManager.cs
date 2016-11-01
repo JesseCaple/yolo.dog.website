@@ -14,10 +14,10 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using TubesWebsite.Data;
-using TubesWebsite.Models;
+using yolo.dog.website.Data;
+using yolo.dog.website.Models;
 
-namespace TubesWebsite.Services
+namespace yolo.dog.website.Services
 {
     public class InviteManager : IInviteManager
     {

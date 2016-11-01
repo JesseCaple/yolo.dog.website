@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace TubesWebsite.Models
+namespace yolo.dog.website.Models
 {
     public class Invite
     {

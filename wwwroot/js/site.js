@@ -6,7 +6,7 @@ Client.Home.Test = function (number, string)
     console.log("number: " + number + "   string:" + string);
 };
 
-TubeReady = function ()
+mRPCReady = function ()
 {
-    Server.Home.Test("im calling the server");
+    //Server.Home.Test("im calling the server");
 };

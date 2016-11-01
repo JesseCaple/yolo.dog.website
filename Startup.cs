@@ -9,15 +9,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using TubesWebsite.Data;
-using TubesWebsite.Models;
-using TubesWebsite.Services;
+using yolo.dog.website.Data;
+using yolo.dog.website.Models;
+using yolo.dog.website.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using mRPC;
 
-namespace TubesWebsite
+namespace yolo.dog.website
 {
     public class Startup
     {

@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using TubesWebsite.Services;
-using TubesWebsite.Models;
+using yolo.dog.website.Services;
+using yolo.dog.website.Models;
 using Microsoft.AspNetCore.Identity;
 using mRPC;
 using NUglify.Helpers;
 using Microsoft.AspNetCore.Authorization;
 
-namespace TubesWebsite.Controllers
+namespace yolo.dog.website.Controllers
 {
     public class HomeController : Controller
     {
@@ -38,11 +38,25 @@ namespace TubesWebsite.Controllers
             await _tube.Test("Jesse");
         }
 
+        public struct TestStuct
+        {
+            public string value1;
+            public string value2;
+        }
+
         [RPC]
         [NonAction]
-        public string Test(int i = 0)
+        public string Test(TestStuct test)
         {
-            return $"You gave me: {i}";
+            return $"You gave me: {test.value1} and {test.value2}";
+        }
+
+
+        [RPC]
+        [NonAction]
+        public string Test2(int number)
+        {
+            return $"You gave me: {number}";
         }
     }
 }

@@ -1,43 +1,46 @@
-﻿// WebSocket client-side implementation of MVCRPC
+﻿// WebSocket client-side implementation of mRPC
 
 if ("WebSocket" in window)
 {
-    var MVCPRC = {};
+    var mRPC = {};
     var Client = {};
     var Server = {};
 
-    MVCPRC.Pending = {};
-    MVCPRC.IDCounter = 0;
-    MVCPRC.GenerateID = function ()
+    mRPC.Pending = {};
+    mRPC.IDCounter = 0;
+    mRPC.GenerateID = function ()
     {
-        return "i" + MVCPRC.IDCounter++;
+        return "i" + mRPC.IDCounter++;
     };
 
-    MVCPRC.Socket = new WebSocket("wss://localhost:44366/rpc/");
-
-    // socket opened
-    MVCPRC.Socket.onopen = function ()
+    mRPC.AddRoute = function (controller, action)
     {
-        var controllers = [];
-        for (namespace in Client)
+        Server[controller][action] = function ()
         {
-            controllers.push(namespace);
+            var id = mRPC.GenerateID();
+            var message = JSON.stringify(
+            {
+                ID: id,
+                Controller: controller,
+                Action: action,
+                Parameters: [].slice.call(arguments)
+            });
+            mRPC.Socket.send(message);
+            mRPC.Pending[id] = {};
+            return mRPC.Pending[id];
         }
-        var message = JSON.stringify(
-        {
-            Controllers: controllers
-        });
-        MVCPRC.Socket.send(message);
     };
+
+    mRPC.Socket = new WebSocket("wss://localhost:44366/mRPC/");
 
     // socket received a message
-    MVCPRC.Socket.onmessage = function (event)
+    mRPC.Socket.onmessage = function (event)
     {
         var message = JSON.parse(event.data);
         if (message.Intent === "Call")
         {
             // call a client function
-            var method = MVCPRC[message.Controller][message.Action];
+            var method = mRPC[message.Controller][message.Action];
             if (typeof method === "function")
             {
                 method.apply(this, message.Parameters);
@@ -56,17 +59,17 @@ if ("WebSocket" in window)
             {
                 value = message.Value;
             }
-            var pending = MVCPRC.Pending[message.ID];
-            delete MVCPRC.Pending[message.ID];
+            var pending = mRPC.Pending[message.ID];
+            delete mRPC.Pending[message.ID];
             if (typeof pending.then === "function")
             {
                 if (message.hasOwnProperty("Error"))
                 {
-                    pending.then(false);
+                    pending.then(null);
                 }
                 else
                 {
-                    pending.then(true, value);
+                    pending.then(value);
                 }
             }
             if (message.hasOwnProperty("Error"))
@@ -77,31 +80,19 @@ if ("WebSocket" in window)
         else if (message.Intent === "Hello")
         {
             // connection established, opening message
-            var rpcfunction = function ()
+            for (var i = 0; i < message.Controllers.length; i++)
             {
-                var id = MVCPRC.GenerateID();
-                var message = JSON.stringify(
-                {
-                    ID: id,
-                    Controller: controller,
-                    Action: action,
-                    Parameters: arguments
-                });
-                MVCPRC.Socket.send(message);
-                MVCPRC.Pending[id] = {};
-                return MVCPRC.Pending[id];
-            };
-            for (controller in message.Controllers)
-            {
+                var controller = message.Controllers[i];
                 Server[controller] = {};
             }
-            for (route in message.Routes)
+            for (var i = 0; i < message.Routes.length; i++)
             {
-                Server[route.Controller][route.action] = rpcfunction;
+                var route = message.Routes[i];
+                mRPC.AddRoute(route.Controller, route.Action);
             }
-            if (typeof RPCReady === "function")
+            if (typeof mRPCReady === "function")
             {
-                RPCReady();
+                mRPCReady();
             }
         }
         else if (message.Intent === "undefined" || message.Intent === null)
@@ -115,12 +106,12 @@ if ("WebSocket" in window)
     };
 
     // socket closed
-    MVCPRC.Socket.onclose = function (e)
+    mRPC.Socket.onclose = function (e)
     {
-        console.log("tube closed: " + e.reason);
-        if (typeof RPCClosed === "function")
+        console.log("mRPC connection closed: " + e.reason);
+        if (typeof mRPCClosed === "function")
         {
-            RPCClosed();
+            mRPCClosed();
         }
     };
 }

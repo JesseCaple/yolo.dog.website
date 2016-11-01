@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace TubesWebsite.Data.Migrations
+namespace yolo.dog.website.Data.Migrations
 {
     public partial class Invites : Migration
     {

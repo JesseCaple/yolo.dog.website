@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using TubesWebsite.Models;
+using yolo.dog.website.Models;
 
-namespace TubesWebsite.Data
+namespace yolo.dog.website.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {

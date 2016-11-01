@@ -1,8 +1,8 @@
-﻿using TubesWebsite.Controllers;
+﻿using yolo.dog.website.Controllers;
 using mRPC;
 using System.Threading.Tasks;
 
-namespace TubesWebsite
+namespace yolo.dog.website
 {
     public static class RPC
     {

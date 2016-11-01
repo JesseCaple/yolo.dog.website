@@ -8,11 +8,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
-using TubesWebsite.Models;
-using TubesWebsite.Models.AccountViewModels;
-using TubesWebsite.Services;
+using yolo.dog.website.Models;
+using yolo.dog.website.Models.AccountViewModels;
+using yolo.dog.website.Services;
 
-namespace TubesWebsite.Controllers
+namespace yolo.dog.website.Controllers
 {
     [Authorize]
     public class AccountController : Controller

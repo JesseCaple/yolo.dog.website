@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using TubesWebsite.Data;
+using yolo.dog.website.Data;
 
-namespace TubesWebsite.Data.Migrations
+namespace yolo.dog.website.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20161009202419_Invites")]

@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using TubesWebsite.Models;
+using yolo.dog.website.Models;
 
-namespace TubesWebsite
+namespace yolo.dog.website
 {
     public static class Extensions
     {
