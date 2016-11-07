@@ -1,10 +1,11 @@
-﻿using System.Threading.Tasks;
-
-namespace yolo.dog.website.Services
+﻿namespace Yolo.Dog.Website.Services
 {
+    using System.Threading.Tasks;
+
     public interface IEmailValidator
     {
         bool IsValidEmail(string email);
+
         bool IsBannedEmailDomain(string email);
     }
 }

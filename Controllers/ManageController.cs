@@ -1,24 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using yolo.dog.website.Models;
-using yolo.dog.website.Models.ManageViewModels;
-using yolo.dog.website.Services;
-
-namespace yolo.dog.website.Controllers
+﻿namespace Yolo.Dog.Website.Controllers
 {
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
+    using Models;
+    using Models.ManageViewModels;
+    using Services;
+
     [Authorize]
     public class ManageController : Controller
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly IEmailSender _emailSender;
-        private readonly ILogger _logger;
+        private readonly UserManager<ApplicationUser> userManager;
+        private readonly SignInManager<ApplicationUser> signInManager;
+        private readonly IEmailSender emailSender;
+        private readonly ILogger logger;
 
         public ManageController(
         UserManager<ApplicationUser> userManager,
@@ -26,97 +23,10 @@ namespace yolo.dog.website.Controllers
         IEmailSender emailSender,
         ILoggerFactory loggerFactory)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _emailSender = emailSender;
-            _logger = loggerFactory.CreateLogger<ManageController>();
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Index(ManageMessageId? message = null)
-        {
-            ViewData["StatusMessage"] =
-                message == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
-                : message == ManageMessageId.SetPasswordSuccess ? "Your password has been set."
-                : message == ManageMessageId.Error ? "An error has occurred."
-                : "";
-
-            var user = await GetCurrentUserAsync();
-            if (user == null)
-            {
-                return View("Error");
-            }
-            return View();
-        }
-
-        [HttpGet]
-        public IActionResult ChangePassword()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-            var user = await GetCurrentUserAsync();
-            if (user != null)
-            {
-                var result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
-                if (result.Succeeded)
-                {
-                    await _signInManager.SignInAsync(user, isPersistent: false);
-                    _logger.LogInformation(3, "User changed their password successfully.");
-                    return RedirectToAction(nameof(Index), new { Message = ManageMessageId.ChangePasswordSuccess });
-                }
-                AddErrors(result);
-                return View(model);
-            }
-            return RedirectToAction(nameof(Index), new { Message = ManageMessageId.Error });
-        }
-
-        [HttpGet]
-        public IActionResult SetPassword()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SetPassword(SetPasswordViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
-            var user = await GetCurrentUserAsync();
-            if (user != null)
-            {
-                var result = await _userManager.AddPasswordAsync(user, model.NewPassword);
-                if (result.Succeeded)
-                {
-                    await _signInManager.SignInAsync(user, isPersistent: false);
-                    return RedirectToAction(nameof(Index), new { Message = ManageMessageId.SetPasswordSuccess });
-                }
-                AddErrors(result);
-                return View(model);
-            }
-            return RedirectToAction(nameof(Index), new { Message = ManageMessageId.Error });
-        }
-
-        #region Helpers
-
-        private void AddErrors(IdentityResult result)
-        {
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
+            this.userManager = userManager;
+            this.signInManager = signInManager;
+            this.emailSender = emailSender;
+            this.logger = loggerFactory.CreateLogger<ManageController>();
         }
 
         public enum ManageMessageId
@@ -131,11 +41,100 @@ namespace yolo.dog.website.Controllers
             Error
         }
 
-        private Task<ApplicationUser> GetCurrentUserAsync()
+        [HttpGet]
+        public async Task<IActionResult> Index(ManageMessageId? message = null)
         {
-            return _userManager.GetUserAsync(HttpContext.User);
+            this.ViewData["StatusMessage"] =
+                message == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
+                : message == ManageMessageId.SetPasswordSuccess ? "Your password has been set."
+                : message == ManageMessageId.Error ? "An error has occurred."
+                : string.Empty;
+
+            var user = await this.GetCurrentUserAsync();
+            if (user == null)
+            {
+                return this.View("Error");
+            }
+
+            return this.View();
         }
 
-        #endregion
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            return this.View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (!this.ModelState.IsValid)
+            {
+                return this.View(model);
+            }
+
+            var user = await this.GetCurrentUserAsync();
+            if (user != null)
+            {
+                var result = await this.userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+                if (result.Succeeded)
+                {
+                    await this.signInManager.SignInAsync(user, isPersistent: false);
+                    this.logger.LogInformation(3, "User changed their password successfully.");
+                    return this.RedirectToAction(nameof(this.Index), new { Message = ManageMessageId.ChangePasswordSuccess });
+                }
+
+                this.AddErrors(result);
+                return this.View(model);
+            }
+
+            return this.RedirectToAction(nameof(this.Index), new { Message = ManageMessageId.Error });
+        }
+
+        [HttpGet]
+        public IActionResult SetPassword()
+        {
+            return this.View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SetPassword(SetPasswordViewModel model)
+        {
+            if (!this.ModelState.IsValid)
+            {
+                return this.View(model);
+            }
+
+            var user = await this.GetCurrentUserAsync();
+            if (user != null)
+            {
+                var result = await this.userManager.AddPasswordAsync(user, model.NewPassword);
+                if (result.Succeeded)
+                {
+                    await this.signInManager.SignInAsync(user, isPersistent: false);
+                    return this.RedirectToAction(nameof(this.Index), new { Message = ManageMessageId.SetPasswordSuccess });
+                }
+
+                this.AddErrors(result);
+                return this.View(model);
+            }
+
+            return this.RedirectToAction(nameof(this.Index), new { Message = ManageMessageId.Error });
+        }
+
+        private void AddErrors(IdentityResult result)
+        {
+            foreach (var error in result.Errors)
+            {
+                this.ModelState.AddModelError(string.Empty, error.Description);
+            }
+        }
+
+        private Task<ApplicationUser> GetCurrentUserAsync()
+        {
+            return this.userManager.GetUserAsync(this.HttpContext.User);
+        }
     }
 }

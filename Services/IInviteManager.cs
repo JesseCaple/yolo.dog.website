@@ -1,12 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using yolo.dog.website.Models;
-
-namespace yolo.dog.website.Services
+﻿namespace Yolo.Dog.Website.Services
 {
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Mvc;
+    using Models;
 
     public enum InviteResult
     {
@@ -21,7 +17,9 @@ namespace yolo.dog.website.Services
     public interface IInviteManager
     {
         Task<InviteResult> SendAsync(ApplicationUser user, string email, ActionContext context);
+
         Task<Invite> FindByCodeAsync(string inviteCode);
+
         Task ClaimAsync(ApplicationUser newUser, Invite invite);
     }
 }

@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore.Migrations;
-
-namespace yolo.dog.website.Data.Migrations
+﻿namespace Yolo.Dog.Website.Data.Migrations
 {
+    using System;
+    using Microsoft.EntityFrameworkCore.Migrations;
+
     public partial class Invites : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)

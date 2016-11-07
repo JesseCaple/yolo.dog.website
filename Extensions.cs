@@ -1,15 +1,14 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using yolo.dog.website.Models;
-
-namespace yolo.dog.website
+﻿namespace Yolo.Dog.Website
 {
+    using System.Text.RegularExpressions;
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
     public static class Extensions
     {
-        public async static Task<T> GetCurrentUserAsync<T>(
+        public static async Task<T> GetCurrentUserAsync<T>(
             this UserManager<T> manager, HttpContext context)
             where T : IdentityUser
         {

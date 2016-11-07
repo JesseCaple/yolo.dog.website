@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
-
-namespace yolo.dog.website.Services
+﻿namespace Yolo.Dog.Website.Services
 {
+    using System.Threading.Tasks;
+
     public interface IEmailSender
     {
         Task SendEmailAsync(string email, string subject, string message);

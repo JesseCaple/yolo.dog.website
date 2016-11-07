@@ -1,12 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace yolo.dog.website.Models.AccountViewModels
+﻿namespace Yolo.Dog.Website.Models.AccountViewModels
 {
+    using System.ComponentModel.DataAnnotations;
+    using Microsoft.AspNetCore.Mvc;
+
     public class RegisterViewModel
     {
         [Required]

@@ -1,31 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using yolo.dog.website.Data;
-using yolo.dog.website.Models;
-using yolo.dog.website.Services;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Authorization;
-using mRPC;
-
-namespace yolo.dog.website
+﻿namespace Yolo.Dog.Website
 {
+    using System;
+    using Data;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.Authorization;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Logging;
+    using Middleware;
+    using Models;
+    using Services;
+
     public class Startup
     {
-        IHostingEnvironment _env;
-
         public Startup(IHostingEnvironment env)
         {
-            _env = env;
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
@@ -37,10 +31,8 @@ namespace yolo.dog.website
                 builder.AddUserSecrets();
             }
 
-
             builder.AddEnvironmentVariables();
-            Configuration = builder.Build();
-
+            this.Configuration = builder.Build();
         }
 
         public IConfigurationRoot Configuration { get; }
@@ -50,23 +42,20 @@ namespace yolo.dog.website
         {
             // Add framework services.
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(this.Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
-
 
             services.AddMvc();
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("RequireAdministratorRole", policy => policy.RequireRole("Administrator"));
             });
-            services.AddRPC();
 
             services.Configure<MvcOptions>(options =>
             {
-
                 var policy = new AuthorizationPolicyBuilder()
                      .RequireAuthenticatedUser()
                      .Build();
@@ -75,6 +64,7 @@ namespace yolo.dog.website
             });
 
             // Add application services.
+            services.AddSingleton<JsonMessageServer>();
             services.AddTransient<IEmailSender, MessageServices>();
             services.AddTransient<IEmailValidator, MessageServices>();
             services.AddScoped<IInviteManager, InviteManager>();
@@ -83,7 +73,7 @@ namespace yolo.dog.website
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+            loggerFactory.AddConsole(this.Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
             Environment.GetEnvironmentVariable($"ASPNETCORE_ENVIRONMENT");
             if (env.IsDevelopment())
@@ -100,13 +90,16 @@ namespace yolo.dog.website
             app.UseStaticFiles();
             app.UseIdentity();
             app.UseWebSockets();
-            app.UseRPCWebSockets();
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            // Add application middleware.
+            app.UseMiddleware<WebSocketMiddleware>();
         }
     }
 }

@@ -1,7 +1,7 @@
 {
-  "title": "yolo.dog.website",
+  "title": "Yolo.Dog.Website",
   "copyright": "Jesse Caple",
-  "description": "sum website shit or whatever",
+  "description": "so website much wow",
   "userSecretsId": "aspnet-tubes-bf3fb638-87f9-4f0a-a37e-09568eac88bb",
 
   "dependencies": {
@@ -41,9 +41,16 @@
     "Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.0.0",
     "MailKit": "1.8.1",
     "BundlerMinifier.Core": "2.2.281",
-    "mRPC": "1.0.0-*",
     "System.Interactive.Async": "3.0.0",
-    "Microsoft.AspNetCore.WebSockets": "0.2.0-alpha1-22392"
+    "Microsoft.AspNetCore.WebSockets": "0.2.0-alpha1-22392",
+    "StyleCop.Analyzers": {
+      "type": "build",
+      "version": "1.0.0"
+    },
+    "Microsoft.CodeAnalysis.FxCopAnalyzers": {
+      "type": "build",
+      "version": "1.2.0-beta2"
+    }
   },
 
   "tools": {
@@ -64,7 +71,9 @@
 
   "buildOptions": {
     "emitEntryPoint": true,
-    "preserveCompilationContext": true
+    "preserveCompilationContext": true,
+    "embed": [ "Data/BannedDomains.txt" ],
+    "additionalArguments": [ "/ruleset:application.ruleset" ]
   },
 
   "runtimeOptions": {
@@ -86,4 +95,5 @@
     "prepublish": [ "bower install", "dotnet bundle" ],
     "postpublish": [ "dotnet publish-iis --publish-folder %publish:OutputPath% --framework %publish:FullTargetFramework%" ]
   }
+
 }

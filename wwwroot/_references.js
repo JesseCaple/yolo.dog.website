@@ -1,5 +1,6 @@
 ﻿/// <autosync enabled="true" />
-/// <reference path="js/mvcrpc.js" />
+/// <reference path="js/home.js" />
+/// <reference path="js/jsonclient.js" />
 /// <reference path="js/site.js" />
 /// <reference path="lib/bootstrap/dist/js/bootstrap.js" />
 /// <reference path="lib/jquery/dist/jquery.js" />

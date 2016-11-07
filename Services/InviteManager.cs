@@ -1,46 +1,40 @@
-﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using yolo.dog.website.Data;
-using yolo.dog.website.Models;
-
-namespace yolo.dog.website.Services
+﻿namespace Yolo.Dog.Website.Services
 {
+    using System;
+    using System.Linq;
+    using System.Security.Cryptography;
+    using System.Threading.Tasks;
+    using Data;
+    using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.Routing;
+    using Microsoft.AspNetCore.WebUtilities;
+    using Microsoft.EntityFrameworkCore;
+    using Models;
+
     public class InviteManager : IInviteManager
     {
-        private readonly ApplicationDbContext _dbContext;
-        private readonly IEmailSender _emailSender;
-        private readonly IEmailValidator _emailValidator;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IHostingEnvironment _env;
+        private readonly ApplicationDbContext database;
+        private readonly IEmailSender emailSender;
+        private readonly IEmailValidator emailValidator;
+        private readonly UserManager<ApplicationUser> userManager;
+        private readonly IHostingEnvironment env;
 
         public InviteManager(
-            ApplicationDbContext dbContext,
+            ApplicationDbContext database,
             IEmailSender emailSender,
             IEmailValidator emailValidator,
             UserManager<ApplicationUser> userManager,
             IHostingEnvironment env)
         {
-            _dbContext = dbContext;
-            _emailSender = emailSender;
-            _emailValidator = emailValidator;
-            _userManager = userManager;
-            _env = env;
+            this.database = database;
+            this.emailSender = emailSender;
+            this.emailValidator = emailValidator;
+            this.userManager = userManager;
+            this.env = env;
         }
-
 
         public async Task<InviteResult> SendAsync(ApplicationUser user, string email, ActionContext context)
         {
@@ -49,32 +43,39 @@ namespace yolo.dog.website.Services
             {
                 throw new ArgumentNullException();
             }
+
             if (user.InvitesClaimed >= user.InvitesAwarded)
             {
                 return InviteResult.NoInvites;
             }
-            var invites = _dbContext.Invites.Where(e => e.User.Id == user.Id);
+
+            var invites = this.database.Invites.Where(e => e.User.Id == user.Id);
             foreach (var i in invites)
             {
                 if (i.Expires > DateTime.UtcNow)
                 {
-                    _dbContext.Remove(i);
+                    this.database.Remove(i);
                 }
-                await _dbContext.SaveChangesAsync();
+
+                await this.database.SaveChangesAsync();
             }
+
             if (invites.Count() >= 25)
             {
                 return InviteResult.LimitReached;
             }
-            if (!_emailValidator.IsValidEmail(email))
+
+            if (!this.emailValidator.IsValidEmail(email))
             {
                 return InviteResult.InvalidEmail;
             }
-            if (_emailValidator.IsBannedEmailDomain(email))
+
+            if (this.emailValidator.IsBannedEmailDomain(email))
             {
                 return InviteResult.BannedEmailDomain;
             }
-            if (await _userManager.FindByEmailAsync(email) != null)
+
+            if (await this.userManager.FindByEmailAsync(email) != null)
             {
                 return InviteResult.EmailInUse;
             }
@@ -96,14 +97,12 @@ namespace yolo.dog.website.Services
             // hash the token
             var hash = await Task.Run(() =>
             {
-                return KeyDerivation.Pbkdf2
-                (
+                return KeyDerivation.Pbkdf2(
                     password: token,
                     salt: WebEncoders.Base64UrlDecode(salt),
                     prf: KeyDerivationPrf.HMACSHA256,
                     iterationCount: 10000,
-                    numBytesRequested: 256 / 8
-                );
+                    numBytesRequested: 256 / 8);
             });
 
             // create the invite
@@ -114,8 +113,8 @@ namespace yolo.dog.website.Services
                 Expires = DateTime.UtcNow.AddDays(3),
                 User = user
             };
-            _dbContext.Invites.Add(invite);
-            await _dbContext.SaveChangesAsync();
+            this.database.Invites.Add(invite);
+            await this.database.SaveChangesAsync();
 
             // send invite to specified email address
             var callbackUrl = new UrlHelper(context).Action(
@@ -129,7 +128,7 @@ namespace yolo.dog.website.Services
                 <p>Click the following link to create an account.</p>
                 <p><a href='{callbackUrl}'>{callbackUrl}</a></p>"
                 .TrimMultiline();
-            await _emailSender.SendEmailAsync(email, subject, message);
+            await this.emailSender.SendEmailAsync(email, subject, message);
             return InviteResult.Success;
         }
 
@@ -146,22 +145,21 @@ namespace yolo.dog.website.Services
             {
                 return null;
             }
+
             var salt = parts[0];
             var token = parts[1];
             var hash = await Task.Run(() =>
             {
-                return KeyDerivation.Pbkdf2
-                (
+                return KeyDerivation.Pbkdf2(
                     password: token,
                     salt: WebEncoders.Base64UrlDecode(salt),
                     prf: KeyDerivationPrf.HMACSHA256,
                     iterationCount: 10000,
-                    numBytesRequested: 256 / 8
-                );
+                    numBytesRequested: 256 / 8);
             });
 
             // get invite by hash if it exists
-            var invite = _dbContext.Invites
+            var invite = this.database.Invites
                 .Where(e => e.TokenHash.SequenceEqual(hash))
                 .Include(e => e.User)
                 .SingleOrDefault();
@@ -171,13 +169,15 @@ namespace yolo.dog.website.Services
             {
                 return null;
             }
+
             if (DateTime.UtcNow >= invite.Expires ||
                 invite.User.InvitesAwarded <= invite.User.InvitesClaimed)
             {
-                _dbContext.Remove(invite);
-                await _dbContext.SaveChangesAsync();
+                this.database.Remove(invite);
+                await this.database.SaveChangesAsync();
                 return null;
             }
+
             return invite;
         }
 
@@ -185,9 +185,8 @@ namespace yolo.dog.website.Services
         {
             invite.User.InvitesClaimed++;
             newUser.InvitedBy = invite.User;
-            _dbContext.Invites.Remove(invite);
-            await _dbContext.SaveChangesAsync();
+            this.database.Invites.Remove(invite);
+            await this.database.SaveChangesAsync();
         }
-
     }
 }

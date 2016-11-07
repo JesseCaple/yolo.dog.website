@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace yolo.dog.website.Models
+﻿namespace Yolo.Dog.Website.Models
 {
+    using System;
+    using System.ComponentModel.DataAnnotations;
+
     public class Invite
     {
         [Key]
